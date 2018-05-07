@@ -1,0 +1,3 @@
+[submodule "vendor/infinity"]
+	path = vendor/infinity
+	url = git@github.com:claudebarthels/infinity.git
