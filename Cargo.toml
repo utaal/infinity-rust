@@ -1,0 +1,12 @@
+[package]
+name = "infinity"
+version = "0.0.1"
+authors = ["Andrea Lattuada <andrea.lattuada@inf.ethz.ch>"]
+
+build = "build.rs"
+links = "infinity"
+
+[dependencies]
+
+[build-dependencies]
+bindgen = "0.36"
