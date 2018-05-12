@@ -7,7 +7,10 @@ use std::process::Command;
 fn main() {
     println!("cargo:include=vendor/infinity/release/include");
     println!("cargo:rustc-link-search=vendor/infinity/release");
+    println!("cargo:include=helpers/release/include");
+    println!("cargo:rustc-link-search=helpers/release");
     println!("cargo:rustc-link-lib=infinity");
+    println!("cargo:rustc-link-lib=infinityhelpers");
     println!("cargo:rustc-link-lib=ibverbs");
     println!("cargo:rustc-link-lib=stdc++");
 
@@ -18,12 +21,18 @@ fn main() {
         .status()
         .expect("Failed to build infinity");
 
+    Command::new("make")
+        .current_dir("helpers/")
+        .status()
+        .expect("Failed to build infinity helpers");
+
     let out_path = PathBuf::from(env::var("OUT_DIR").unwrap());
 
     // generate the bindings
-    let bindings = bindgen::Builder::default()
+    bindgen::Builder::default()
         .header("wrapper.h")
         .clang_arg("-Ivendor/infinity/release/include/")
+        .clang_arg("-Ihelpers/release/include/")
         .clang_arg("-x").clang_arg("c++")
         .clang_arg("-std=c++14")
         .opaque_type("std::.*")
@@ -33,6 +42,7 @@ fn main() {
         .whitelist_type("infinity::queues::QueuePairFactory")
         .whitelist_type("infinity::memory::Region")
         .whitelist_type("infinity::memory::RegionToken")
+        .whitelist_function("infinityhelpers::.*")
         .opaque_type("infinity::memory::Buffer")
         .enable_cxx_namespaces()
         .generate()

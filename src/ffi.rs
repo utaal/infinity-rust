@@ -5,3 +5,4 @@
 include!(concat!(env!("OUT_DIR"), "/bindings.rs"));
 
 pub use self::root::infinity;
+pub use self::root::infinityhelpers;

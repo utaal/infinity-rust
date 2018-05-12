@@ -45,7 +45,9 @@ fn main() {
 
             ffi::infinity::memory::Buffer_Buffer_destructor(&mut buffer_to_read_write as *mut _);
             ffi::infinity::memory::Buffer_Buffer_destructor(&mut buffer_to_receive as *mut _);
-            (*qp).destruct();
+
+            ffi::infinityhelpers::memory::delete_RegionToken(buffer_token);
+            ffi::infinityhelpers::queues::delete_QueuePair(qp);
         } else {
 		    eprintln!("Connecting to remote node");
             let qp = qp_factory.connectToRemoteHost(
@@ -79,7 +81,8 @@ fn main() {
 
             ffi::infinity::memory::Buffer_Buffer_destructor(&mut buffer_1_sided as *mut _);
             ffi::infinity::memory::Buffer_Buffer_destructor(&mut buffer_2_sided as *mut _);
-            (*qp).destruct();
+
+            ffi::infinityhelpers::queues::delete_QueuePair(qp);
         }
 
         qp_factory.destruct();

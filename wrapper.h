@@ -4,3 +4,5 @@
 #include <infinity/queues/QueuePairFactory.h>
 #include <infinity/memory/Region.h>
 #include <infinity/memory/RegionToken.h>
+
+#include <infinityhelpers/helpers.h>
