@@ -1,11 +1,29 @@
 use ffi;
 
-struct ReceiveElement {
-    _receive_element: ffi::infinity::core::receive_element_t,
+pub struct ReceiveElement {
+    buffer: Option<(::memory::Buffer, usize)>,
+    immediate: Option<u32>,
 }
 
-struct Context {
-    _context: ffi::infinity::core::Context,
+impl ReceiveElement {
+    fn from_receive_element_t(recv: ffi::infinity::core::receive_element_t) -> Self {
+        unsafe {
+            ReceiveElement {
+                buffer: Some((
+                    ::memory::Buffer::from_raw(recv.buffer),
+                    recv.bytesWritten as usize)),
+                immediate: if recv.immediateValueValid {
+                    Some(recv.immediateValue)
+                } else {
+                    None
+                },
+            }
+        }
+    }
+}
+
+pub struct Context {
+    pub(crate) _context: ffi::infinity::core::Context,
 }
 
 impl Context {
@@ -21,9 +39,7 @@ impl Context {
         unsafe {
             let mut receive_element: ffi::infinity::core::receive_element_t = ::std::mem::zeroed();
             if self._context.receive(&mut receive_element as *mut _) {
-                Some(ReceiveElement {
-                    _receive_element: receive_element,
-                })
+                Some(ReceiveElement::from_receive_element_t(receive_element))
             } else {
                 None
             }

@@ -40,6 +40,9 @@ fn main() {
             let mut receive_element: ffi::infinity::core::receive_element_t = ::std::mem::zeroed();
             while !context.receive(&mut receive_element as *mut _) { }
 
+            let buffer_to_read_write_data = ::std::mem::transmute::<_, &mut u64>(buffer_to_read_write.getData());
+            eprintln!("Read/write data: {}", buffer_to_read_write_data);
+
             let receive_element_data = ::std::mem::transmute::<_, &mut u64>((*receive_element.buffer).getData());
             eprintln!("Message received: {}", receive_element_data);
 
@@ -67,6 +70,9 @@ fn main() {
             let mut request_token = ffi::infinity::requests::RequestToken::new(&mut context as *mut _);
             (*qp).read(&mut buffer_1_sided as *mut _, remote_buffer_token, &mut request_token as *mut _);
             request_token.waitUntilCompleted();
+
+            let buffer_1_sided_data = ::std::mem::transmute::<_, &mut u64>(buffer_1_sided.getData());
+            *buffer_1_sided_data = 84;
 
             eprintln!("Writing content to remote buffer");
             (*qp).write(&mut buffer_1_sided as *mut _, remote_buffer_token, &mut request_token as *mut _);
