@@ -19,7 +19,47 @@ impl<'a> QueuePair<'a> {
             let mut _request_token = Box::new(
                 ffi::infinity::requests::RequestToken::new(
                     &mut (*self.context._context.borrow_mut()) as *mut _));
-            (*self._queue_pair).send(buffer.into_raw(), &mut (*_request_token) as *mut _);
+            (*self._queue_pair).send(
+                buffer.into_raw(),
+                &mut (*_request_token) as *mut _);
+            ::requests::RequestToken {
+                _request_token,
+            }
+        }
+    }
+
+    pub fn read(
+        &mut self,
+        buffer: ::memory::Buffer,
+        region_token: &::memory::RegionToken) -> ::requests::RequestToken {
+
+        unsafe {
+            let mut _request_token = Box::new(
+                ffi::infinity::requests::RequestToken::new(
+                    &mut (*self.context._context.borrow_mut()) as *mut _));
+            (*self._queue_pair).read(
+                buffer.into_raw(),
+                region_token._region_token,
+                &mut (*_request_token) as *mut _);
+            ::requests::RequestToken {
+                _request_token,
+            }
+        }
+    }
+
+    pub fn write(
+        &mut self,
+        buffer: ::memory::Buffer,
+        region_token: &::memory::RegionToken) -> ::requests::RequestToken {
+
+        unsafe {
+            let mut _request_token = Box::new(
+                ffi::infinity::requests::RequestToken::new(
+                    &mut (*self.context._context.borrow_mut()) as *mut _));
+            (*self._queue_pair).write(
+                buffer.into_raw(),
+                region_token._region_token,
+                &mut (*_request_token) as *mut _);
             ::requests::RequestToken {
                 _request_token,
             }

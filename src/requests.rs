@@ -10,20 +10,23 @@ pub struct RequestToken {
 }
 
 impl RequestToken {
-    pub fn wait_until_completed(mut self) -> RequestResult {
+    pub fn wait_until_completed(mut self) -> Option<RequestResult> {
         unsafe {
             self._request_token.waitUntilCompleted();
-            assert!(self._request_token.wasSuccessful());
-            let buffer = ::memory::Buffer::from_raw(
-                ::std::mem::transmute(self._request_token.getRegion()));
-            let immediate = if self._request_token.hasImmediateValue() {
-                Some(self._request_token.getImmediateValue())
-            } else {
+            if !self._request_token.wasSuccessful() {
                 None
-            };
-            RequestResult {
-                buffer,
-                immediate,
+            } else {
+                let buffer = ::memory::Buffer::from_raw(
+                    ::std::mem::transmute(self._request_token.getRegion()));
+                let immediate = if self._request_token.hasImmediateValue() {
+                    Some(self._request_token.getImmediateValue())
+                } else {
+                    None
+                };
+                Some(RequestResult {
+                    buffer,
+                    immediate,
+                })
             }
         }
     }

@@ -3,7 +3,7 @@ use std::cell::UnsafeCell;
 use ffi;
 
 pub struct RegionToken {
-    _region_token: *mut ffi::infinity::memory::RegionToken,
+    pub(crate) _region_token: *mut ffi::infinity::memory::RegionToken,
     cxx_delete: bool,
 }
 
@@ -132,6 +132,19 @@ impl Drop for Buffer {
 
 pub struct UnsafeBuffer {
     _buffer: UnsafeCell<Box<ffi::infinity::memory::Buffer>>,
+}
+
+impl UnsafeBuffer {
+    pub fn read(&mut self) -> Box<[u8]> {
+        unsafe {
+            let size = (*::std::mem::transmute::<_, *mut ffi::infinity::memory::Region>(
+                (*self._buffer.get()).as_mut())).getSizeInBytes();
+            let slice = ::std::slice::from_raw_parts_mut(
+                ::std::mem::transmute::<_, *mut u8>((*self._buffer.get()).getData()),
+                size as usize);
+            slice.to_vec().into_boxed_slice()
+        }
+    }
 }
 
 impl Drop for UnsafeBuffer {
