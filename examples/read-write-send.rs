@@ -1,5 +1,7 @@
 extern crate infinity;
 
+use std::io::Read;
+
 use infinity::ffi;
 
 fn main() {
@@ -12,46 +14,40 @@ fn main() {
         _ => panic!("invalid mode"),
     };
 
-    unsafe {
-        let mut context = ffi::infinity::core::Context::new(0, 1);
-        let mut qp_factory = ffi::infinity::queues::QueuePairFactory::new(
-            &mut context as *mut _);
+    if server {
+        let mut context = infinity::core::Context::new(0, 1);
+        let mut qp_factory = infinity::queues::QueuePairFactory::new(&context);
 
-        if server {
-            eprintln!("Creating buffers to read from and write to");
-            let mut buffer_to_read_write = ffi::infinity::memory::Buffer::new(
-                &mut context as *mut _, 128);
-            let buffer_to_read_write_ptr: *mut _ = &mut buffer_to_read_write as *mut _;
-            let buffer_token = 
-                (*::std::mem::transmute::<_, *mut ffi::infinity::memory::Region>(buffer_to_read_write_ptr)).createRegionToken();
+        eprintln!("Creating buffers to read from and write to");
+        let buffer_to_read_write = infinity::memory::Buffer::new(&context, 128);
+        let buffer_token = buffer_to_read_write.region_token();
 
-            eprintln!("Creating buffers to receive a message");
-            let mut buffer_to_receive = ffi::infinity::memory::Buffer::new(
-                &mut context as *mut _, 128);
-            context.postReceiveBuffer(&mut buffer_to_receive as *mut _);
+        eprintln!("Creating buffers to receive a message");
+        let mut buffer_to_receive = infinity::memory::Buffer::new(&context, 128);
+        context.post_receive_buffer(buffer_to_receive);
 
-            eprintln!("Setting up connection (blocking)");
-            qp_factory.bindToPort(8011);
-            let qp = qp_factory.acceptIncomingConnection(
-                buffer_token as *mut ::std::os::raw::c_void,
-                ::std::mem::size_of::<ffi::infinity::memory::RegionToken>() as u32);
+        eprintln!("Setting up connection (blocking)");
+        qp_factory.bind_to_port(8011);
+        let _qp = qp_factory.accept_incoming_connection(buffer_token.as_bytes());
 
-            eprintln!("Waiting for message (blocking)");
-            let mut receive_element: ffi::infinity::core::receive_element_t = ::std::mem::zeroed();
-            while !context.receive(&mut receive_element as *mut _) { }
+        eprintln!("Waiting for message (blocking)");
+        let infinity::core::ReceiveElement { buffer: (mut recv_buf, recv_len), immediate, } = loop {
+            let el = context.receive();
+            if let Some(el) = el {
+                break el;
+            }
+        };
 
-            let buffer_to_read_write_data = ::std::mem::transmute::<_, &mut u64>(buffer_to_read_write.getData());
-            eprintln!("Read/write data: {}", buffer_to_read_write_data);
-
-            let receive_element_data = ::std::mem::transmute::<_, &mut u64>((*receive_element.buffer).getData());
+        unsafe {
+            let receive_element_data = ::std::mem::transmute::<_, &mut u64>((&mut recv_buf[..]).as_mut_ptr());
             eprintln!("Message received: {}", receive_element_data);
+        }
+    } else {
+        unsafe {
+            let mut context = ffi::infinity::core::Context::new(0, 1);
+            let mut qp_factory = ffi::infinity::queues::QueuePairFactory::new(
 
-            ffi::infinity::memory::Buffer_Buffer_destructor(&mut buffer_to_read_write as *mut _);
-            ffi::infinity::memory::Buffer_Buffer_destructor(&mut buffer_to_receive as *mut _);
-
-            ffi::infinityhelpers::memory::delete_RegionToken(buffer_token);
-            ffi::infinityhelpers::queues::delete_QueuePair(qp);
-        } else {
+            &mut context as *mut _);
 		    eprintln!("Connecting to remote node");
             let qp = qp_factory.connectToRemoteHost(
                 ::std::ffi::CString::new("192.168.1.62").unwrap().as_ptr(),
@@ -89,9 +85,9 @@ fn main() {
             ffi::infinity::memory::Buffer_Buffer_destructor(&mut buffer_2_sided as *mut _);
 
             ffi::infinityhelpers::queues::delete_QueuePair(qp);
-        }
 
-        qp_factory.destruct();
-        context.destruct();
+            qp_factory.destruct();
+            context.destruct();
+        }
     }
 }

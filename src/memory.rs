@@ -29,11 +29,11 @@ pub struct Buffer {
 }
 
 impl Buffer {
-    pub fn new(context: &mut ::core::Context, size: u64) -> Self {
+    pub fn new(context: & ::core::Context, size: u64) -> Self {
         unsafe {
             Buffer {
                 _buffer: UnsafeCell::new(Box::new(ffi::infinity::memory::Buffer::new(
-                    &mut context._context as *mut _, size))),
+                    &mut (*context._context.borrow_mut()) as *mut _, size))),
             }
         }
     }
@@ -63,7 +63,7 @@ impl Buffer {
 
     unsafe fn as_region_ptr(&self) -> *mut ffi::infinity::memory::Region {
         ::std::mem::transmute::<_, *mut ffi::infinity::memory::Region>(
-            self._buffer.get())
+            (*self._buffer.get()).as_mut())
     }
 }
 

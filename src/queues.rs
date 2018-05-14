@@ -1,6 +1,6 @@
 use ffi;
 
-struct QueuePair<'a> {
+pub struct QueuePair<'a> {
     _queue_pair: *mut ffi::infinity::queues::QueuePair,
     _phantom: ::std::marker::PhantomData<&'a ()>,
 }
@@ -13,29 +13,29 @@ impl<'a> Drop for QueuePair<'a> {
     }
 }
 
-struct QueuePairFactory<'a> {
+pub struct QueuePairFactory<'a> {
     _queue_pair_factory: ffi::infinity::queues::QueuePairFactory,
     _phantom: ::std::marker::PhantomData<&'a ()>,
 }
 
 impl<'a> QueuePairFactory<'a> {
-    fn new(context: &'a mut ::core::Context) -> QueuePairFactory<'a> {
+    pub fn new(context: &'a ::core::Context) -> QueuePairFactory<'a> {
         unsafe {
             QueuePairFactory {
                 _queue_pair_factory: ffi::infinity::queues::QueuePairFactory::new(
-                    &mut context._context as *mut _),
+                    &mut (*context._context.borrow_mut()) as *mut _),
                 _phantom: ::std::marker::PhantomData,
             }
         }
     }
 
-    fn bind_to_port(&mut self, port: u16) {
+    pub fn bind_to_port(&mut self, port: u16) {
         unsafe {
             self._queue_pair_factory.bindToPort(port);
         }
     }
 
-    fn accept_incoming_connection<'b>(&mut self, user_data: &[u8]) -> QueuePair<'b> where 'a: 'b {
+    pub fn accept_incoming_connection<'b>(&mut self, user_data: &[u8]) -> QueuePair<'b> where 'a: 'b {
         let _queue_pair = unsafe {
             self._queue_pair_factory.acceptIncomingConnection(
                 user_data.as_ptr() as *mut ::std::os::raw::c_void,

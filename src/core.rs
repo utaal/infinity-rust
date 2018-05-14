@@ -1,17 +1,19 @@
+use std::cell::RefCell;
+
 use ffi;
 
 pub struct ReceiveElement {
-    buffer: Option<(::memory::Buffer, usize)>,
-    immediate: Option<u32>,
+    pub buffer: (::memory::Buffer, usize),
+    pub immediate: Option<u32>,
 }
 
 impl ReceiveElement {
     fn from_receive_element_t(recv: ffi::infinity::core::receive_element_t) -> Self {
         unsafe {
             ReceiveElement {
-                buffer: Some((
+                buffer: (
                     ::memory::Buffer::from_raw(recv.buffer),
-                    recv.bytesWritten as usize)),
+                    recv.bytesWritten as usize),
                 immediate: if recv.immediateValueValid {
                     Some(recv.immediateValue)
                 } else {
@@ -23,22 +25,23 @@ impl ReceiveElement {
 }
 
 pub struct Context {
-    pub(crate) _context: ffi::infinity::core::Context,
+    pub(crate) _context: RefCell<ffi::infinity::core::Context>,
 }
 
 impl Context {
     pub fn new(device_id: u16, device_port: u16) -> Self {
         unsafe {
             Context {
-                _context: ffi::infinity::core::Context::new(device_id, device_port),
+                _context: RefCell::new(
+                    ffi::infinity::core::Context::new(device_id, device_port)),
             }
         }
     }
 
-    pub fn receive(&mut self) -> Option<ReceiveElement> {
+    pub fn receive(&self) -> Option<ReceiveElement> {
         unsafe {
             let mut receive_element: ffi::infinity::core::receive_element_t = ::std::mem::zeroed();
-            if self._context.receive(&mut receive_element as *mut _) {
+            if self._context.borrow_mut().receive(&mut receive_element as *mut _) {
                 Some(ReceiveElement::from_receive_element_t(receive_element))
             } else {
                 None
@@ -46,9 +49,9 @@ impl Context {
         }
     }
 
-    pub fn post_receive_buffer(&mut self, buffer: ::memory::Buffer) {
+    pub fn post_receive_buffer(&self, buffer: ::memory::Buffer) {
         unsafe {
-            self._context.postReceiveBuffer(buffer.into_raw())
+            self._context.borrow_mut().postReceiveBuffer(buffer.into_raw())
         }
     }
 }
@@ -56,7 +59,7 @@ impl Context {
 impl Drop for Context {
     fn drop(&mut self) {
         unsafe {
-            self._context.destruct();
+            self._context.borrow_mut().destruct();
         }
     }
 }
