@@ -2,6 +2,28 @@ use std::cell::UnsafeCell;
 
 use ffi;
 
+pub struct RegionToken {
+    _region_token: *mut ffi::infinity::memory::RegionToken,
+}
+
+impl RegionToken {
+    pub fn as_bytes(&self) -> &[u8] {
+        unsafe {
+            ::std::slice::from_raw_parts(
+                ::std::mem::transmute(self._region_token),
+                ::std::mem::size_of::<ffi::infinity::memory::RegionToken>())
+        }
+    }
+}
+
+impl Drop for RegionToken {
+    fn drop(&mut self) {
+        unsafe {
+            ffi::infinityhelpers::memory::delete_RegionToken(self._region_token);
+        }
+    }
+}
+
 pub struct Buffer {
     _buffer: UnsafeCell<Box<ffi::infinity::memory::Buffer>>,
 }
@@ -19,6 +41,23 @@ impl Buffer {
     pub(crate) unsafe fn from_raw(buffer: *mut ffi::infinity::memory::Buffer) -> Self {
         Buffer {
             _buffer: UnsafeCell::new(Box::from_raw(buffer)),
+        }
+    }
+
+    pub(crate) unsafe fn into_raw(mut self) -> *mut ffi::infinity::memory::Buffer {
+        // HERE BE DRAGONS
+        let _buffer = ::std::mem::replace(
+            &mut self._buffer,
+            UnsafeCell::new(Box::from_raw(::std::ptr::null_mut())));
+        ::std::mem::forget(self);
+        Box::into_raw(_buffer.into_inner())
+    }
+
+    pub fn region_token(&self) -> RegionToken {
+        unsafe {
+            RegionToken {
+                _region_token: (*self.as_region_ptr()).createRegionToken()
+            }
         }
     }
 

@@ -45,6 +45,12 @@ impl Context {
             }
         }
     }
+
+    pub fn post_receive_buffer(&mut self, buffer: ::memory::Buffer) {
+        unsafe {
+            self._context.postReceiveBuffer(buffer.into_raw())
+        }
+    }
 }
 
 impl Drop for Context {
