@@ -51,7 +51,8 @@ impl Context {
 
     pub fn post_receive_buffer(&self, buffer: ::memory::Buffer) {
         unsafe {
-            self._context.borrow_mut().postReceiveBuffer(buffer.into_raw())
+            let raw_buffer = buffer.into_raw();
+            self._context.borrow_mut().postReceiveBuffer(raw_buffer);
         }
     }
 }
