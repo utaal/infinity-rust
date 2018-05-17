@@ -64,14 +64,12 @@ impl Buffer {
         }
     }
 
-    pub(crate) unsafe fn into_raw(mut self) -> *mut ffi::infinity::memory::Buffer {
-        let _buffer_box = unsafe {
-            (*self._buffer.get()).take().expect("Buffer._buffer should never be None")
-        };
+    pub(crate) unsafe fn into_raw(self) -> *mut ffi::infinity::memory::Buffer {
+        let _buffer_box = (*self._buffer.get()).take().expect("Buffer._buffer should never be None");
         Box::into_raw(_buffer_box)
     }
 
-    pub fn region_token(mut self) -> (UnsafeBuffer, RegionToken) {
+    pub fn region_token(self) -> (UnsafeBuffer, RegionToken) {
         let region_token = unsafe {
             RegionToken {
                 _region_token: (*self.as_region_ptr()).createRegionToken(),
@@ -79,9 +77,7 @@ impl Buffer {
             }
         };
         let unsafe_buffer = unsafe {
-            let _buffer_box = unsafe {
-                (*self._buffer.get()).take().expect("Buffer._buffer should never be None")
-            };
+            let _buffer_box = (*self._buffer.get()).take().expect("Buffer._buffer should never be None");
             UnsafeBuffer {
                 _buffer: UnsafeCell::new(_buffer_box),
             }

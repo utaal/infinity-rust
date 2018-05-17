@@ -16,10 +16,22 @@ fn main() {
 
     // build vendor/rdma-core
     Command::new("make")
-        .args(&["CC_FLAGS=-O3 -std=c++0x -fPIC"])
+        .args(&["clean"])
+        .current_dir("vendor/infinity/")
+        .status()
+        .expect("Failed to build (clean) infinity");
+
+    Command::new("make")
+        .args(&["CC_FLAGS=-O3 -std=c++0x -fPIC -DINFINITY_ASSERT_ON"])
         .current_dir("vendor/infinity/")
         .status()
         .expect("Failed to build infinity");
+
+    Command::new("make")
+        .args(&["clean"])
+        .current_dir("helpers/")
+        .status()
+        .expect("Failed to build (clean) infinity helpers");
 
     Command::new("make")
         .current_dir("helpers/")
