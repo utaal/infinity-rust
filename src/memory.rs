@@ -2,6 +2,8 @@ use std::cell::UnsafeCell;
 
 use ffi;
 
+pub const region_token_bytes_size: usize = ::std::mem::size_of::<ffi::infinity::memory::RegionToken>();
+
 pub struct RegionToken {
     pub(crate) _region_token: *mut ffi::infinity::memory::RegionToken,
     cxx_delete: bool,
@@ -30,6 +32,12 @@ impl RegionToken {
             })
         }
     }
+
+    pub fn get_size_in_bytes(&self) -> u64 {
+        unsafe {
+            (*self._region_token).getSizeInBytes()
+        }
+    }
 }
 
 impl Drop for RegionToken {
@@ -55,6 +63,12 @@ impl Buffer {
                 _buffer: UnsafeCell::new(Some(Box::new(ffi::infinity::memory::Buffer::new(
                     &mut (*context._context.borrow_mut()) as *mut _, size)))),
             }
+        }
+    }
+
+    pub fn get_size_in_bytes(&mut self) -> u64 {
+        unsafe {
+            (*self.as_region_ptr()).getSizeInBytes()
         }
     }
 
@@ -86,8 +100,9 @@ impl Buffer {
     }
 
     unsafe fn as_region_ptr(&self) -> *mut ffi::infinity::memory::Region {
-        ::std::mem::transmute::<_, *mut ffi::infinity::memory::Region>(
-            (*self._buffer.get()).as_mut())
+        use std::ops::DerefMut;
+        ::std::mem::transmute::<*mut ffi::infinity::memory::Buffer, *mut ffi::infinity::memory::Region>(
+            (*self._buffer.get()).as_mut().unwrap().deref_mut())
     }
 }
 
@@ -141,6 +156,13 @@ impl UnsafeBuffer {
                 size as usize);
             slice.to_vec().into_boxed_slice()
         }
+    }
+
+    pub unsafe fn raw<P>(&mut self) -> (*mut P, usize) {
+        let size = (*::std::mem::transmute::<_, *mut ffi::infinity::memory::Region>(
+            (*self._buffer.get()).as_mut())).getSizeInBytes();
+        let ptr = ::std::mem::transmute::<_, *mut P>((*self._buffer.get()).getData());
+        (ptr, size as usize)
     }
 }
 
