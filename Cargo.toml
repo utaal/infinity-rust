@@ -1,7 +1,12 @@
 [package]
 name = "infinity"
-version = "0.1.0"
+version = "0.1.1"
 authors = ["Andrea Lattuada <andrea.lattuada@inf.ethz.ch>"]
+
+description = "A rust wrapper for Infinity, a lightweight RDMA library for InfiniBand"
+repository = "https://github.com/utaal/infinity-rust"
+
+license = "MIT"
 
 build = "build.rs"
 links = "infinity"

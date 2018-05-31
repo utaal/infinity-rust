@@ -35,7 +35,7 @@ all: library
 $(BUILD_FOLDER)/%.o: $(SOURCE_FILES) $(HEADER_FILES)
 	mkdir -p $(BUILD_FOLDER)
 	mkdir -p $(BUILD_DIRECTORIES)
-	g++ $(COMPILER_FLAGS) -c $(SOURCE_FOLDER)/$*.cpp -I $(SOURCE_FOLDER) -I ../vendor/rdma-database-engine/code/net/infinity/release/include -o $(BUILD_FOLDER)/$*.o
+	g++ $(COMPILER_FLAGS) -c $(SOURCE_FOLDER)/$*.cpp -I $(SOURCE_FOLDER) -I ../vendor/infinity/release/include -o $(BUILD_FOLDER)/$*.o
 
 ########################################
 
