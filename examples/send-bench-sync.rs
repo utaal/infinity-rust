@@ -2,6 +2,19 @@ extern crate infinity;
 
 use std::time::Instant;
 
+// ------ Helpers ----------
+
+mod helpers {
+    use libc::{_SC_PAGESIZE, sysconf};
+
+    #[inline]
+    pub fn get_page_size() -> usize {
+        unsafe {
+            sysconf(_SC_PAGESIZE) as usize
+        }
+    }
+}
+
 // ------ HDHistogram ------
 
 const HDHISTOGRAM_BITS: usize = 4;
