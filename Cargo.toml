@@ -1,6 +1,6 @@
 [package]
 name = "infinity"
-version = "0.0.1"
+version = "0.1.0"
 authors = ["Andrea Lattuada <andrea.lattuada@inf.ethz.ch>"]
 
 build = "build.rs"
