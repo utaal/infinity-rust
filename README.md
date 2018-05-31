@@ -14,5 +14,5 @@ This project contains an idiomatic, safe Rust wrapper for the C++ [Infinity](htt
 
 Infinity, and the Rust wrapper in this repository, are MIT-licensed.
 
-* [Infinity's license](https://github.com/claudebarthels/infinity/blob/master/LICENSE.txt)
-* [This project's license](https://github.com/utaal/infinity-rust/blob/master/LICENSE.txt)
+* [Infinity's license](https://github.com/claudebarthels/infinity/blob/master/LICENSE.txt); Infinity is (C) Claude Barthels, ETH Zurich;
+* [This project's license](https://github.com/utaal/infinity-rust/blob/master/LICENSE.txt); this project is (C) Andrea Lattuada, ETH Zurich.
