@@ -30,4 +30,10 @@ impl RequestToken {
             }
         }
     }
+
+    pub fn check_if_completed(&mut self) -> bool {
+        unsafe {
+            self._request_token.checkIfCompleted()
+        }
+    }
 }
