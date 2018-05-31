@@ -1,3 +1,7 @@
 
 /target
 **/*.rs.bk
+/helpers/build
+/helpers/release
+/vendor/infinity/build
+/vendor/infinity/release
