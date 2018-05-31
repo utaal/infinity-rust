@@ -2,8 +2,6 @@ use std::cell::UnsafeCell;
 
 use ffi;
 
-pub const region_token_bytes_size: usize = ::std::mem::size_of::<ffi::infinity::memory::RegionToken>();
-
 pub struct RegionToken {
     pub(crate) _region_token: *mut ffi::infinity::memory::RegionToken,
     cxx_delete: bool,
