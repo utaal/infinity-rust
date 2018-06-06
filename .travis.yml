@@ -10,5 +10,8 @@ addons:
     update: true
 script:
   - cargo build --verbose --all
+  - cargo doc
+after_success:
+  - sh scripts/travis-doc-upload.sh
 git:
   submodules: false
