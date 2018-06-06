@@ -1,6 +1,6 @@
 # Infinity in Rust - A lightweight C++ RDMA library for InfiniBand
 
-[![Crates.io](https://img.shields.io/crates/v/infinity.svg)](https://crates.io/crates/infinity)
+[![Crates.io](https://img.shields.io/crates/v/infinity.svg)](https://crates.io/crates/infinity) [![Build Status](https://travis-ci.org/utaal/infinity-rust.svg?branch=master)](https://travis-ci.org/utaal/infinity-rust) [![Docs.rs](https://docs.rs/infinity/badge.svg)](https://docs.rs/crate/infinity)
 
 Infinity is a simple, powerful, object-oriented abstraction of ibVerbs. The library enables users to build sophisticated applications that use Remote Direct Memory Access (RDMA) without sacrificing performance. It significantly lowers the barrier to get started with RDMA programming. Infinity provides support for two-sided (send/receive) as well as one-sided (read/write/atomic) operations.
 
