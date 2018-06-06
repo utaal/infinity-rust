@@ -156,7 +156,7 @@ fn main() {
                     *buffer_data = i;
                 }
 
-                let request_token = qp.send(buffer.take().unwrap());
+                let request_token = qp.send(buffer.take().unwrap(), Default::default());
                 request_tokens.push((prev, request_token));
                 i += 1;
             }

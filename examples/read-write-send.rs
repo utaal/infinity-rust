@@ -62,7 +62,7 @@ fn main() {
         let mut buffer_2_sided = infinity::memory::Buffer::new(&context, 128);
 
         eprintln!("Reading content from remote buffer");
-        let request_token = qp.read(buffer_1_sided, &remote_buffer_token);
+        let request_token = qp.read(buffer_1_sided, &remote_buffer_token, Default::default());
         let infinity::requests::RequestResult { buffer: mut buffer_1_sided, .. } =
             request_token.wait_until_completed().expect("Read failed");
 
@@ -73,7 +73,7 @@ fn main() {
         }
 
 		eprintln!("Writing content to remote buffer");
-        let request_token = qp.write(buffer_1_sided, &remote_buffer_token);
+        let request_token = qp.write(buffer_1_sided, &remote_buffer_token, Default::default());
         request_token.wait_until_completed().expect("Write failed");
 
         unsafe {
@@ -82,7 +82,7 @@ fn main() {
         }
 
         eprintln!("Sending message to remote host");
-        let request_token = qp.send(buffer_2_sided);
+        let request_token = qp.send(buffer_2_sided, Default::default());
         request_token.wait_until_completed().expect("Send failed");
     }
 }

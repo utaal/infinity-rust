@@ -52,6 +52,7 @@ fn main() {
         .whitelist_type("infinity::queues::QueuePairFactory")
         .whitelist_type("infinity::memory::Region")
         .whitelist_type("infinity::memory::RegionToken")
+        .whitelist_type("ibv_send_flags")
         .whitelist_function("infinityhelpers::.*")
         .opaque_type("infinity::memory::Buffer")
         .enable_cxx_namespaces()

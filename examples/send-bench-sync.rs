@@ -5,13 +5,9 @@ use std::time::Instant;
 // ------ Helpers ----------
 
 mod helpers {
-    use libc::{_SC_PAGESIZE, sysconf};
-
     #[inline]
     pub fn get_page_size() -> usize {
-        unsafe {
-            sysconf(_SC_PAGESIZE) as usize
-        }
+        4096
     }
 }
 
@@ -137,7 +133,7 @@ fn main() {
                 *buffer_2_sided_data = i;
             }
 
-            let request_token = qp.send(buffer_2_sided.take().unwrap());
+            let request_token = qp.send(buffer_2_sided.take().unwrap(), Default::default());
             buffer_2_sided = Some(request_token.wait_until_completed().expect("Send failed").buffer);
 
             let rtt_elapsed = prev.elapsed();
