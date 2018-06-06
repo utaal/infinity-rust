@@ -1,6 +1,6 @@
 [package]
 name = "infinity"
-version = "0.2.0"
+version = "0.2.1"
 authors = ["Andrea Lattuada <andrea.lattuada@inf.ethz.ch>"]
 
 description = "A rust wrapper for Infinity, a lightweight RDMA library for InfiniBand"
