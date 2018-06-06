@@ -3,8 +3,12 @@ rust:
   - stable
 before_install:
   - sudo apt-get install -y libibverbs-dev clang
+  - sed -i 's/git@github.com:/https:\/\/github.com\//' .gitmodules
+  - git submodule update --init --recursive
 addons:
   apt:
     update: true
 script:
   - cargo build --verbose --all
+git:
+  submodules: false
