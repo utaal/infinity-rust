@@ -10,6 +10,14 @@ This project contains an idiomatic, safe Rust wrapper for the C++ [Infinity](htt
 
 `infinity` is on [crates.io](https://crates.io/crates/infinity). You need ''ibVerbs'' installed for Infinity to build.
 
+## Development
+
+If you're developing on a machine that doesn't have `libibverbs` available, you can use the `utaal/rust-ibverbs` docker image to test your builds as follows:
+
+    docker run --rm -t -v .:/root/infinity-rust utaal/rust-libibverbs bash -c '(cd /root/infinity-rust; cargo build --all)'
+
+The `Dockerfile` for `utaal/rust-libibverbs` is in `docker/`.
+
 ## License
 
 Infinity, and the Rust wrapper in this repository, are MIT-licensed.
