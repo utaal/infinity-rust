@@ -9,10 +9,10 @@ fn main() {
     println!("cargo:rustc-link-search=vendor/infinity/release");
     println!("cargo:include=helpers/release/include");
     println!("cargo:rustc-link-search=helpers/release");
-    println!("cargo:rustc-link-lib=stdc++");
-    println!("cargo:rustc-link-lib=ibverbs");
     println!("cargo:rustc-link-lib=infinity");
     println!("cargo:rustc-link-lib=infinityhelpers");
+    println!("cargo:rustc-link-lib=ibverbs");
+    println!("cargo:rustc-link-lib=stdc++");
 
     Command::new("make")
         .args(&["clean"])
@@ -21,7 +21,7 @@ fn main() {
         .expect("Failed to build (clean) infinity");
 
     Command::new("make")
-        .args(&["CC_FLAGS=-O3 -std=c++0x -DINFINITY_ASSERT_ON"])
+        .args(&["CC_FLAGS=-O3 -std=c++0x -fPIC -DINFINITY_ASSERT_ON"])
         .current_dir("vendor/infinity/")
         .status()
         .expect("Failed to build infinity");
