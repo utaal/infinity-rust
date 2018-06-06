@@ -20,13 +20,13 @@ mkdir -p ~/.ssh
 openssl aes-256-cbc -K $key -iv $iv -in scripts/id_rsa_infinity_rust_docs.enc -out ~/.ssh/id_rsa -d
 chmod 600 ~/.ssh/id_rsa
 
-git clone --branch gh-pages git@github.com:$DOCS_REPO deploy_docs
+git clone git@github.com:$DOCS_REPO deploy_docs
 
 cd deploy_docs
-git config user.name "doc upload bot"
-git config user.email "nobody@example.com"
+git config user.name "Nobody"
+git config user.email "<nobody>"
 rm -rf $PROJECT_NAME
 mv ../target/doc $PROJECT_NAME
 git add -A $PROJECT_NAME
 git commit -qm "doc upload for $PROJECT_NAME ($TRAVIS_REPO_SLUG)"
-git push -q origin gh-pages
+git push -q origin master
