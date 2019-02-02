@@ -59,7 +59,7 @@ impl Buffer {
         unsafe {
             Buffer {
                 _buffer: UnsafeCell::new(Some(Box::new(ffi::infinity::memory::Buffer::new(
-                    &mut (*context._context.borrow_mut()) as *mut _, size)))),
+                    context._context as *mut _, size)))),
             }
         }
     }

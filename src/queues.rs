@@ -129,8 +129,7 @@ impl<'a> QueuePair<'a> {
 
         QueuePair::with_flags(self._queue_pair, options.fenced, options.inlined, || unsafe {
             let mut _request_token = Box::new(
-                ffi::infinity::requests::RequestToken::new(
-                    &mut (*self.context._context.borrow_mut()) as *mut _));
+                ffi::infinity::requests::RequestToken::new(self.context._context));
             let buffer_size_in_bytes = buffer.get_size_in_bytes();
             let size_in_bytes = options.size_in_bytes.map(|x| x as u64).unwrap_or(buffer_size_in_bytes);
             assert!(size_in_bytes <= buffer_size_in_bytes,
@@ -156,8 +155,7 @@ impl<'a> QueuePair<'a> {
 
         QueuePair::with_flags(self._queue_pair, options.fenced, options.inlined, || unsafe {
             let mut _request_token = Box::new(
-                ffi::infinity::requests::RequestToken::new(
-                    &mut (*self.context._context.borrow_mut()) as *mut _));
+                ffi::infinity::requests::RequestToken::new(self.context._context));
             let buffer_size_in_bytes = buffer.get_size_in_bytes();
             let size_in_bytes = options.size_in_bytes.map(|x| x as u64).unwrap_or(buffer_size_in_bytes);
             assert!(size_in_bytes <= buffer_size_in_bytes,
@@ -185,8 +183,7 @@ impl<'a> QueuePair<'a> {
 
         QueuePair::with_flags(self._queue_pair, options.fenced, options.inlined, || unsafe {
             let mut _request_token = Box::new(
-                ffi::infinity::requests::RequestToken::new(
-                    &mut (*self.context._context.borrow_mut()) as *mut _));
+                ffi::infinity::requests::RequestToken::new(self.context._context));
             let buffer_size_in_bytes = buffer.get_size_in_bytes();
             let size_in_bytes = options.size_in_bytes.map(|x| x as u64).unwrap_or(buffer_size_in_bytes);
             assert!(size_in_bytes <= buffer_size_in_bytes,
@@ -224,8 +221,7 @@ impl<'a> QueuePairFactory<'a> {
     pub fn new(context: &'a ::core::Context) -> QueuePairFactory<'a> {
         unsafe {
             QueuePairFactory {
-                _queue_pair_factory: ffi::infinity::queues::QueuePairFactory::new(
-                    &mut (*context._context.borrow_mut()) as *mut _),
+                _queue_pair_factory: ffi::infinity::queues::QueuePairFactory::new(context._context),
                 context,
             }
         }
