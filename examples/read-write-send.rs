@@ -2,8 +2,6 @@ extern crate infinity;
 
 use std::io::Read;
 
-use infinity::ffi;
-
 fn main() {
     let mut args = ::std::env::args();
     args.next().unwrap();
@@ -54,7 +52,7 @@ fn main() {
         let mut qp_factory = infinity::queues::QueuePairFactory::new(&context);
 
         eprintln!("Connecting to remote node");
-        let mut qp = qp_factory.connect_to_remote_host(::std::net::SocketAddr::from(([192, 168, 1, 62], 8011)), &[]);
+        let mut qp = qp_factory.connect_to_remote_host(::std::net::SocketAddr::from(([192, 168, 1, 63], 8011)), &[]);
         let remote_buffer_token = infinity::memory::RegionToken::from_bytes(qp.get_user_data()).expect("invalid remote buffer token");
 
         eprintln!("Creating buffers");
