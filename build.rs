@@ -27,6 +27,12 @@ fn main() {
         .expect("Failed to build infinity");
 
     Command::new("make")
+        .args(&["release"])
+        .current_dir("vendor/infinity/")
+        .status()
+        .expect("Failed to build infinity");
+
+    Command::new("make")
         .args(&["clean"])
         .current_dir("helpers/")
         .status()

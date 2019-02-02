@@ -103,31 +103,18 @@ impl<'a> QueuePair<'a> {
         }
     }
 
-    #[inline]
-    fn with_flags<T>(
-        _queue_pair: *mut ffi::infinity::queues::QueuePair,
-        fenced: bool,
-        inlined: bool,
-        inner: impl FnOnce()->T) -> T {
-
-        unsafe {
-            (*_queue_pair).defaultFlags =
-                if fenced { ffi::root::ibv_send_flags_IBV_SEND_FENCE as i32 } else { 0 } |
-                if inlined { ffi::root::ibv_send_flags_IBV_SEND_INLINE as i32 } else { 0 };
-        }
-        let result = (inner)();
-        unsafe {
-            (*_queue_pair).defaultFlags = 0;
-        }
-        result
-    }
-
     pub fn send(
         &mut self,
         mut buffer: ::memory::Buffer,
         options: SendOptions) -> ::requests::RequestToken {
 
-        QueuePair::with_flags(self._queue_pair, options.fenced, options.inlined, || unsafe {
+        let flags = ffi::infinity::queues::OperationFlags {
+            fenced: options.fenced,
+            inlined: options.inlined,
+            signaled: false,
+        };
+
+        unsafe {
             let mut _request_token = Box::new(
                 ffi::infinity::requests::RequestToken::new(self.context._context));
             let buffer_size_in_bytes = buffer.get_size_in_bytes();
@@ -140,11 +127,12 @@ impl<'a> QueuePair<'a> {
                 buffer.into_raw(),
                 options.local_offset,
                 size_in_bytes as u32,
+                flags,
                 &mut (*_request_token) as *mut _);
             ::requests::RequestToken {
                 _request_token,
             }
-        })
+        }
     }
 
     pub fn read(
@@ -153,7 +141,13 @@ impl<'a> QueuePair<'a> {
         region_token: &::memory::RegionToken,
         options: OneSidedOptions) -> ::requests::RequestToken {
 
-        QueuePair::with_flags(self._queue_pair, options.fenced, options.inlined, || unsafe {
+        let flags = ffi::infinity::queues::OperationFlags {
+            fenced: options.fenced,
+            inlined: options.inlined,
+            signaled: false,
+        };
+
+        unsafe {
             let mut _request_token = Box::new(
                 ffi::infinity::requests::RequestToken::new(self.context._context));
             let buffer_size_in_bytes = buffer.get_size_in_bytes();
@@ -168,11 +162,12 @@ impl<'a> QueuePair<'a> {
                 region_token._region_token,
                 options.remote_offset,
                 size_in_bytes as u32,
+                flags,
                 &mut (*_request_token) as *mut _);
             ::requests::RequestToken {
                 _request_token,
             }
-        })
+        }
     }
 
     pub fn write(
@@ -181,7 +176,13 @@ impl<'a> QueuePair<'a> {
         region_token: &::memory::RegionToken,
         options: OneSidedOptions) -> ::requests::RequestToken {
 
-        QueuePair::with_flags(self._queue_pair, options.fenced, options.inlined, || unsafe {
+        let flags = ffi::infinity::queues::OperationFlags {
+            fenced: options.fenced,
+            inlined: options.inlined,
+            signaled: false,
+        };
+
+        unsafe {
             let mut _request_token = Box::new(
                 ffi::infinity::requests::RequestToken::new(self.context._context));
             let buffer_size_in_bytes = buffer.get_size_in_bytes();
@@ -196,11 +197,12 @@ impl<'a> QueuePair<'a> {
                 region_token._region_token,
                 options.remote_offset,
                 size_in_bytes as u32,
+                flags,
                 &mut (*_request_token) as *mut _);
             ::requests::RequestToken {
                 _request_token,
             }
-        })
+        }
     }
 }
 
